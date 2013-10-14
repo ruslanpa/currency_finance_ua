@@ -92,6 +92,3 @@ class CurrencyFinanceUA
     end
   end
 end
-
-puts CurrencyFinanceUA.rate_of_exchange('RUB', { rate: 'max', bid_ask: 'bid' })
-puts CurrencyFinanceUA.value_of_rate
