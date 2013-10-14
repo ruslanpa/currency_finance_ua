@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ruslanpa/currency_finance_ua.png)](https://travis-ci.org/ruslanpa/currency_finance_ua)
+
 currency_finance_ua
 ===================
 
