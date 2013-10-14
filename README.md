@@ -10,11 +10,8 @@ usage
     $ gem install currency_finance_ua
     $ require 'currency_finance_ua'
 
-    # Load json data from http://content.finance.ua/ru/xml/currency-cash/
-    $ CurrencyFinanceUA.load
-
     # Get rate of exchange by current date
-    # :rate - 'min' or 'max'
-    # :bid_ask - 'bid' or 'ask' spread
+    # rate: 'min' or 'max'
+    # bid_ask: 'bid' or 'ask' spread
     # return organization which are satisfied for all options
-    $ CurrencyFinanceUA.rate_of_exchange(Money::Currency.new('USD'), {:rate => 'min', :bid_ask => 'ask'})
+    $ CurrencyFinanceUA.rate_of_exchange('USD', { rate: 'min', bid_ask: 'ask' })
