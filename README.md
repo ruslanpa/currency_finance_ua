@@ -3,7 +3,7 @@ currency_finance_ua
 
 It is a simple wrapper by http://content.finance.ua/ru/xml/currency-cash/
 
-You can to get currency rate of exchange specified by max or min value and ask-bid spread.
+You can to get currency rate of exchange specified by max or min value and bid-ask spread.
 
 usage
 ===================
@@ -18,4 +18,3 @@ usage
     # :bid_ask - 'bid' or 'ask' spread
     # return organization which are satisfied for all options
     $ CurrencyFinanceUA.rate_of_exchange(Money::Currency.new('USD'), {:rate => 'min', :bid_ask => 'ask'})
-    
