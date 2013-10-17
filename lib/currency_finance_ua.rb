@@ -82,10 +82,10 @@ class CurrencyFinanceUA
   # The object witch store data of organization.
   #
   # Arguments:
-  #               title: (String)
-  #             address: (String)
-  #               phone: (String)
-  #   rate_of_exchange : (Float)  
+  #              title: (String)
+  #            address: (String)
+  #              phone: (String)
+  #   rate_of_exchange: (Float)
   class Organization
     attr_accessor :title, :address, :phone, :rate_of_exchange
 
