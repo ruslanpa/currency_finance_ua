@@ -1,94 +1,102 @@
 require 'open-uri'
 require 'json'
 
-# CurrencyFinanceUA is a wrapper of currency.finance.ua.
-# Possibility to get rate of exchange for current date.
+# A simple wrapper under http://content.finance.ua/ru/xml/currency-cash/
+# Possibility to get rate of exchange for current date, in the UAH equivalent
 #
 # All data provided by http://content.finance.ua/ru/xml/currency-cash/
 class CurrencyFinanceUA
   HOST = 'http://resources.finance.ua/ua/public/currency-cash.json'
 
   class << self
-    attr_reader :organizations, :cities, :value_of_rate
+    attr_reader :currency, :option, :orgs, :cities, :value_of_rate
 
     # Example:
     #   >> option = { rate: 'min', bid_ask: 'ask' }
-    #   >> CurrencyFinanceUA.rate_of_exchange('usd', option)
+    #   >> CurrencyFinanceUA.rate_of_exchange('USD', option)
     #
     # Arguments:
     #   currency: (String)
     #     option: (Hash)
     def rate_of_exchange(currency = 'USD', option)
+      @currency, @option = currency, option
+
       json = JSON.parse(open(HOST).read)
 
       parse_cities json
-      parse_organizations json
+      parse_orgs json
 
-      @value_of_rate = min_or_max(currency, option[:rate], option[:bid_ask])
-      @organizations.select do |organization|
-        current_currency = organization.currencies[currency.upcase]
-        unless current_currency.nil?
-          current_currency[option[:bid_ask]].to_s == @value_of_rate
-        end
-      end
+      min_or_max
+      
+      @orgs.select { |i| i.rate_of_exchange == @value_of_rate }
     end
 
     private
 
-    # @return organizations parsed from json file
+    # @return available organizations which contains current currency
     #
     # Arguments:
     #   json: (JSON String)
-    def parse_organizations(json)
-      @organizations = []
-      json['organizations'].each do |item|
-        address = "#{find_city_by_id(item['cityId'])}, #{item['address']}"
-        organization = Organization.new(item['title'], address)
-        organization.phone = item['phone']
-        organization.currencies = item['currencies']
-        organization.link = item['link']
-        @organizations << organization
+    def parse_orgs(json)
+      @orgs = []
+      json['organizations'].each do |i|
+        c = i['currencies'][@currency.upcase]
+        unless c.nil?
+          address = "#{find_city_by_id(i['cityId'])}, #{i['address']}"
+          org = Organization.new(i['title'], address, i['phone'])
+          org.rate_of_exchange = Float(c[@option[:bid_ask]])
+          @orgs << org
+        end        
       end
-    end
+    end  
 
     private
 
-    # @return array of city_id
+    # @return cities as hash object
     def parse_cities(json)
-      @cities = json['cities'].to_h
+      @cities = json['cities'].to_hash
     end
 
     private
 
-    # @return min or max value for current currency rate
-    def min_or_max(currency, rate, bid_ask)
-      values = []
-      @organizations.each do |organization|
-        currencies = organization.currencies[currency.upcase]
-        values << currencies[bid_ask] unless currencies.nil?
-      end
-      values.send rate
+    # @return min or max value of rate
+    def min_or_max
+      @orgs.sort_by! { |a| a.rate_of_exchange}
+      unless @orgs.empty?
+        org = @orgs[0]
+        if @option[:rate] == 'max' 
+          org = @orgs[-1]
+        end
+        @value_of_rate = org.rate_of_exchange
+      end      
     end
 
     private
 
-    # Find city title by id
+    # @return city title by id
     def find_city_by_id(city_id)
       @cities[city_id]
     end
   end
 
   # The object witch store data of organization.
+  #
+  # Arguments:
+  #               title: (String)
+  #             address: (String)
+  #               phone: (String)
+  #   rate_of_exchange : (Float)  
   class Organization
-    attr_accessor :title, :address, :phone, :link, :currencies
+    attr_accessor :title, :address, :phone, :rate_of_exchange
 
-    def initialize(title, address)
+    def initialize(title, address, phone)
       @title = title
       @address = address
+      @phone = phone
     end
 
     def to_s
-      "#{@title} | #{phone} | #{@address}"
+      "#{@title} | #{phone} | #{@address} | #{@rate_of_exchange} UAH"
     end
   end
 end
