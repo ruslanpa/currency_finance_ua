@@ -1,4 +1,4 @@
-# CurrencyFinanceUa
+# CurrencyFinanceUA
 
 It's a simple wrapper under <http://content.finance.ua/ru/xml/currency-cash>
 
