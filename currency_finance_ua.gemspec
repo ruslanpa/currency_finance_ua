@@ -9,6 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["ruslanpa"]
   spec.email         = ["ruslan.pavlutskiy@gmail.com"]
   spec.description   = %q{It's a simple wrapper under <http://content.finance.ua/ru/xml/currency-cash>}
+  spec.summary       = %q{It's a simple wrapper under <http://content.finance.ua/ru/xml/currency-cash>}
   spec.homepage      = "https://github.com/ruslanpa/currency_finance_ua"
   spec.license       = "MIT"
 
